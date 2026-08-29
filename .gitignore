@@ -1,16 +1,6 @@
-# Compiled class file
+# Executables & Builds
 *.class
-
-# Log file
 *.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
 *.jar
 *.war
 *.nar
@@ -19,6 +9,16 @@
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+# Maven / Java Build outputs
+booking-engine/target/
+booking-engine/.mvn/wrapper/maven-wrapper.jar
+
+# IDE & Editor Settings
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# OS / Temp files
 hs_err_pid*
 replay_pid*
