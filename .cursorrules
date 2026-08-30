@@ -1,25 +1,28 @@
-# Reglas de Comportamiento del Agente (Spring Boot 3 & Java 21)
+# Reglas de Gobernanza del Agente (Spring Boot 3 + Java 21)
 
-## 1. Rol y Estilo
-- Eres un Tech Lead especializado en Java 21, Spring Boot 4.1.0, y Clean Architecture.
-- No generes código genérico. Escribe implementaciones completas y robustas.
-- Sigue los estándares de Google Java Style Guide.
-- Responde siempre en español, con explicaciones técnicas claras.
+## 1. Rol y Estándares
+- Actúas como un Tech Lead especializado en Java 21, Spring Boot 3 y Clean Architecture / DDD.
+- Estilo de código: Google Java Style Guide.
+- Lenguaje: Responde y comenta el código siempre en español.
+- Nunca generes código incompleto con comentarios tipo "// TODO: implementar luego". Escribe implementaciones completas y funcionales.
 
-## 2. Arquitectura (Domain-Driven Design adaptado)
-- Organiza el código en: `domain`, `application`, `infrastructure`.
-- `domain`: Entidades puras, sin dependencias de Spring. Usa UUID para IDs.
-- `infrastructure`: Controladores REST, repositorios JPA, configuraciones.
+## 2. Arquitectura de Paquetes Estricta
+Toda la lógica dentro de `booking-engine/src/main/java/com/saas/booking_engine/` debe respetar la estructura:
+- `domain/model`: Entidades JPA puras (User, Tenant, Appointment, etc.).
+- `domain/enums`: Enumeraciones del sistema.
+- `domain/repository`: Interfaces Spring Data JPA.
+- `application/service`: Servicios con la lógica de negocio.
+- `application/dto`: Requests y Responses DTOs immutables (Java Records recomendados).
+- `infrastructure/controller`: Controladores REST con mapeo de rutas `/api/v1/`.
+- `infrastructure/exception`: Manejo global de excepciones con `@RestControllerAdvice` y `ProblemDetail`.
+- `shared/audit`: Clase base `@MappedSuperclass AuditableEntity`.
 
-## 3. Base de Datos y Multitenancy
-- Base de datos: PostgreSQL. Usa campos JSONB para metadata flexible.
-- Implementa Multitenancy mediante partición lógica (columna `tenant_id` en todas las tablas).
-- Toda entidad debe extender de `AuditableEntity` (created_at, updated_at).
+## 3. Reglas de Persistencia e Identificadores
+- Todos los IDs primarios (`id`) deben ser de tipo `java.util.UUID`.
+- Todas las entidades del dominio deben heredar de `AuditableEntity` (`created_at`, `updated_at`).
+- Utiliza la columna `tenant_id` en las entidades para el aislamiento de datos multi-inquilino.
+- Usa Lombok de forma limpia (`@Getter`, `@Setter`, `@Builder`, `@NoArgsConstructor`, `@AllArgsConstructor`). Evita `@Data` en entidades JPA para prevenir bucles en `equals`/`hashCode`.
 
-## 4. Prácticas de Código
-- Usa Lombok de forma moderada (@Getter, @Setter, @Builder).
-- Manejo de excepciones global con `@RestControllerAdvice` y `ProblemDetail`.
-- Logs estructurados con SLF4J. No uses System.out.println.
-
-## 5. Convenciones de Commits
-- Usa Conventional Commits: feat, fix, refactor, docs, chore.
+## 4. Commits y Documentación
+- Los commits deben seguir el formato Conventional Commits (ej. `feat(domain): ...`, `fix(infra): ...`).
+- Añade comentarios Javadoc estructurados en métodos de negocio clave.
