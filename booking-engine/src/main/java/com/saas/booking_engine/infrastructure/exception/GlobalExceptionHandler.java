@@ -1,9 +1,12 @@
 package com.saas.booking_engine.infrastructure.exception;
 
 import com.saas.booking_engine.domain.exception.DuplicateSlugException;
+import com.saas.booking_engine.domain.exception.EmailAlreadyExistsException;
 import com.saas.booking_engine.domain.exception.TenantNotFoundException;
+import com.saas.booking_engine.domain.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -26,6 +29,30 @@ public class GlobalExceptionHandler {
     ProblemDetail problemDetail =
         ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
     problemDetail.setTitle("Tenant no encontrado");
+    return problemDetail;
+  }
+
+  @ExceptionHandler(EmailAlreadyExistsException.class)
+  public ProblemDetail handleEmailAlreadyExistsException(EmailAlreadyExistsException exception) {
+    ProblemDetail problemDetail =
+        ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
+    problemDetail.setTitle("Email ya registrado");
+    return problemDetail;
+  }
+
+  @ExceptionHandler(UserNotFoundException.class)
+  public ProblemDetail handleUserNotFoundException(UserNotFoundException exception) {
+    ProblemDetail problemDetail =
+        ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
+    problemDetail.setTitle("Usuario no encontrado");
+    return problemDetail;
+  }
+
+  @ExceptionHandler(BadCredentialsException.class)
+  public ProblemDetail handleBadCredentialsException(BadCredentialsException exception) {
+    ProblemDetail problemDetail =
+        ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, exception.getMessage());
+    problemDetail.setTitle("Credenciales inválidas");
     return problemDetail;
   }
 }
