@@ -16,4 +16,13 @@ public interface TenantService {
    * @throws com.saas.booking_engine.domain.exception.DuplicateSlugException si el slug ya existe
    */
   TenantResponse createTenant(CreateTenantRequest request);
+
+  /**
+   * Recupera un tenant por su slug.
+   *
+   * @param slug identificador único del tenant
+   * @return representación del tenant encontrado
+   * @throws com.saas.booking_engine.domain.exception.TenantNotFoundException si no existe
+   */
+  TenantResponse getTenantBySlug(String slug);
 }

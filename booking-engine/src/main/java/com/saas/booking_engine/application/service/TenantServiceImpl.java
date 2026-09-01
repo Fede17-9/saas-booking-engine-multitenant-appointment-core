@@ -37,4 +37,20 @@ public class TenantServiceImpl implements TenantService {
     Tenant savedTenant = tenantRepository.save(tenant);
     return TenantMapper.toResponse(savedTenant);
   }
+
+  /**
+   * Recupera un tenant por su slug o lanza una excepción si no existe.
+   *
+   * @param slug identificador único del tenant
+   * @return representación del tenant encontrado
+   * @throws com.saas.booking_engine.domain.exception.TenantNotFoundException si el slug no existe
+   */
+  @Override
+  @Transactional(readOnly = true)
+  public TenantResponse getTenantBySlug(String slug) {
+    return tenantRepository
+        .findBySlug(slug)
+        .map(TenantMapper::toResponse)
+        .orElseThrow(() -> new com.saas.booking_engine.domain.exception.TenantNotFoundException(slug));
+  }
 }
