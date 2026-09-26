@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.saas.booking_engine.application.dto.auth.RegisterUserRequest;
 import com.saas.booking_engine.application.dto.auth.LoginRequest;
@@ -44,7 +45,7 @@ class AuthServiceImplTest {
     Tenant tenant = Tenant.builder().id(tenantId).name("Acme").slug("acme").build();
     RegisterUserRequest request =
         new RegisterUserRequest(
-            tenantId, "ana@acme.com", "secret123", "Ana", "Lopez", "555", UserRole.STAFF);
+            tenantId, "ana@acme.com", "secret123", "Ana", "Lopez", "555", UserRole.CUSTOMER);
 
     when(tenantRepository.findById(tenantId)).thenReturn(Optional.of(tenant));
     when(userRepository.existsByEmailAndTenantId("ana@acme.com", tenantId)).thenReturn(false);
@@ -57,7 +58,19 @@ class AuthServiceImplTest {
     assertNotNull(response);
     assertEquals("jwt-token", response.token());
     assertEquals("ana@acme.com", response.email());
-    assertEquals(UserRole.STAFF, response.role());
+    assertEquals(UserRole.CUSTOMER, response.role());
+  }
+
+  @Test
+  void register_shouldRejectSuperAdminRole() {
+    RegisterUserRequest request =
+        new RegisterUserRequest(
+            null, "admin@platform.com", "secret123", "Platform", "Admin", null,
+            UserRole.SUPER_ADMIN);
+
+    assertThrows(
+      com.saas.booking_engine.domain.exception.PublicRegistrationRoleNotAllowedException.class,
+      () -> authService.register(request));
   }
 
   @Test

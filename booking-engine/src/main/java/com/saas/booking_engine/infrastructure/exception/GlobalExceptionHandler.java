@@ -2,6 +2,7 @@ package com.saas.booking_engine.infrastructure.exception;
 
 import com.saas.booking_engine.domain.exception.DuplicateSlugException;
 import com.saas.booking_engine.domain.exception.EmailAlreadyExistsException;
+import com.saas.booking_engine.domain.exception.PublicRegistrationRoleNotAllowedException;
 import com.saas.booking_engine.domain.exception.TenantNotFoundException;
 import com.saas.booking_engine.domain.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -53,6 +54,15 @@ public class GlobalExceptionHandler {
     ProblemDetail problemDetail =
         ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, exception.getMessage());
     problemDetail.setTitle("Credenciales inválidas");
+    return problemDetail;
+  }
+
+  @ExceptionHandler(PublicRegistrationRoleNotAllowedException.class)
+  public ProblemDetail handlePublicRegistrationRoleNotAllowedException(
+      PublicRegistrationRoleNotAllowedException exception) {
+    ProblemDetail problemDetail =
+        ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, exception.getMessage());
+    problemDetail.setTitle("Rol no permitido en el registro público");
     return problemDetail;
   }
 }
